@@ -1,7 +1,7 @@
 function main() {
   const inputArray = ['a', 'b', 'c', 'd', 'e'];
 
-  printKValues(inputArray, '', inputArray.length(), inputArray.length());
+  printKValues(inputArray, '', inputArray.length, inputArray.length);
 }
 
 function printKValues(input, prefix, n, arrayLenth) {
@@ -26,3 +26,5 @@ function printValuesBasedOnLen(array) {
     }
   }
 }
+
+main()
