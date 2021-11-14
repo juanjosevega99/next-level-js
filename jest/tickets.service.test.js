@@ -1,55 +1,52 @@
-const { expect, beforeEach } = require('@jest/globals');
-const ticketsService = require('./tickets.service');
+const { expect } = require('@jest/globals');
+const { hasFreeTickets } = require('./tickets.service');
+const scoreService = require('./score.service');
 
 describe('.hasFreeTickets(user)', () => {
-  let dummyUser;
-
   describe('when the user is VIP', () => {
-    beforeEach(() => {
-      dummyUser = new User({ isVip: true });
+    test('should have a free ticket when is below the score threshold', () => {
+      const user = new User({ isVip: true });
+      // Creamos un test doble que siempre devuelve 4
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(4);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(true);
     });
-    test('should have a free ticket when is below the junior threshold', () => {
-      dummyUser.experience = 1;
-      const actual = ticketsService.hasFreeTickets(dummyUser);
-      expect(actual).toBeTruthy();
+    test('should have a free ticket when is exactly at the score threshold', () => {
+      const user = new User({ isVip: true });
+      // Creamos un test doble que siempre devuelve 5
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(5);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(false);
     });
-    test('should have a free ticket when is exactly at the junior threshold', () => {
-      dummyUser.experience = 3;
-      const actual = ticketsService.hasFreeTickets(dummyUser);
-      expect(actual).toBeTruthy();
-    });
-    test('should have a free ticket when is over the junior threshold', () => {
-      dummyUser.experience = 4;
-
-      const actual = ticketsService.hasFreeTickets(dummyUser);
-
-      expect(actual).toBeTruthy();
+    test('should have a free ticket when is over the score threshold', () => {
+      const user = new User({ isVip: true });
+      // Creamos un test doble que siempre devuelve 6
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(6);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(true);
     });
   });
   describe('when the user is not VIP', () => {
-    beforeEach(() => {
-      dummyUser = new User({ isVip: false });
+    test('should have a free ticket when is below the score threshold ', () => {
+      const user = new User({ isVip: false });
+      // Creamos un test doble que siempre devuelve 4
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(4);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(true);
     });
-    test('should have a free ticket when is below the junior threshold', () => {
-      dummyUser.experience = 1;
-
-      const actual = ticketsService.hasFreeTickets(dummyUser);
-
-      expect(actual).toBeFalsy();
+    test('should NOT have a free ticket when is exactly at the score threshold', () => {
+      const user = new User({ isVip: false });
+      // Creamos un test doble que siempre devuelve 5
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(5);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(false);
     });
-    test('should have a free ticket when is exactly at the junior threshold', () => {
-      dummyUser.experience = 3;
-
-      const actual = ticketsService.hasFreeTickets(dummyUser);
-
-      expect(actual).toBeTruthy();
-    });
-    test('should NOT have a free ticket when is over the junior threshold', () => {
-      dummyUser.experience = 4;
-
-      const actual = ticketsService.hasFreeTickets(freeUser);
-
-      expect(actual).toBeFalsy();
+    test('should NOT have a free ticket when is over the score threshold', () => {
+      const user = new User({ isVip: false });
+      // Creamos un test doble que siempre devuelve 6
+      jest.spyOn(scoreService, 'computeScore').mockReturnValue(6);
+      const actual = hasFreeTickets(user);
+      expect(actual).toBe(false);
     });
   });
 });
